@@ -1,0 +1,238 @@
+:root {
+  --cyan: #5eead4;
+  --cyan-dim: rgba(94, 234, 212, 0.15);
+  --bg: #020617;
+  --border-color: rgba(94, 234, 212, 0.3);
+  --red: #f87171;
+  --red-dim: rgba(248, 113, 113, 0.2);
+  --panel-bg: rgba(0, 10, 20, 0.8);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'JetBrains Mono', monospace;
+  text-transform: uppercase;
+}
+
+/* Custom Futuristic Scrollbar */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.2); }
+::-webkit-scrollbar-thumb { background: var(--cyan); box-shadow: 0 0 10px var(--cyan); }
+
+body {
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(circle at 50% 50%, rgba(94, 234, 212, 0.05) 0%, transparent 100%),
+    linear-gradient(rgba(94, 234, 212, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(94, 234, 212, 0.02) 1px, transparent 1px);
+  background-size: 100% 100%, 50px 50px, 50px 50px;
+  color: var(--cyan);
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+.app-container {
+  display: grid;
+  grid-template-rows: 60px 1fr 220px;
+  grid-template-columns: 350px 1fr 350px;
+  gap: 15px;
+  padding: 15px;
+  height: 100vh;
+  width: 100vw;
+}
+
+.panel {
+  border: 1px solid var(--border-color);
+  background: var(--panel-bg);
+  padding: 15px;
+  font-size: 11px;
+  position: relative;
+  box-shadow: inset 0 0 20px rgba(94, 234, 212, 0.05);
+  overflow: hidden;
+}
+
+.panel::before, .panel::after {
+  content: "";
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--cyan);
+}
+
+.panel::before { top: -1px; left: -1px; border-right: 0; border-bottom: 0; }
+.panel::after { bottom: -1px; right: -1px; border-left: 0; border-top: 0; }
+
+.panel-header {
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  color: var(--cyan);
+  text-shadow: 0 0 8px var(--cyan);
+  display: flex;
+  justify-content: space-between;
+}
+
+header {
+  grid-column: 1 / span 3;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo-center {
+  font-size: 2.5rem;
+  font-weight: bold;
+  letter-spacing: 0.8rem;
+  color: #fff;
+  text-shadow: 0 0 20px var(--cyan);
+  position: relative;
+}
+
+.neural-pulse {
+  position: absolute;
+  top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 110%; height: 110%; border: 1px solid var(--cyan);
+  border-radius: 4px; opacity: 0; animation: pulse 2s infinite;
+}
+@keyframes pulse { 0% { opacity: 0.5; transform: translate(-50%,-50%) scale(1); } 100% { opacity: 0; transform: translate(-50%,-50%) scale(1.1); } }
+
+.graph-container {
+  height: 45px;
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  margin-bottom: 8px;
+}
+
+.graph-bar {
+  flex: 1;
+  background: var(--cyan);
+  box-shadow: 0 0 5px var(--cyan);
+}
+
+main {
+  grid-column: 2;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.terminal-content {
+  flex: 1;
+  background: rgba(0, 5, 10, 0.9);
+  border: 1px solid var(--border-color);
+  padding: 15px;
+  font-size: 13px;
+  overflow-y: auto;
+  color: #e2e8f0;
+  line-height: 1.4;
+}
+
+.terminal-input {
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  color: #fff !important;
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 13px !important;
+  flex: 1;
+  margin-left: 8px;
+}
+
+.ai-logic-panel {
+  font-size: 10px;
+  line-height: 1.5;
+  height: 140px;
+  overflow-y: auto;
+  color: var(--cyan);
+}
+
+.keyboard-panel {
+  grid-column: 2 / span 2;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px;
+  justify-content: center;
+}
+
+.key-row {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+}
+
+.key {
+  border: 1px solid var(--border-color);
+  padding: 8px;
+  min-width: 42px;
+  text-align: center;
+  background: rgba(94, 234, 212, 0.05);
+  font-size: 11px;
+  transition: all 0.1s ease;
+  cursor: pointer;
+  color: var(--cyan);
+}
+
+/* Tugma bosilgandagi animatsiya klassi */
+.key.pressed {
+  background: var(--cyan) !important;
+  color: var(--bg) !important;
+  box-shadow: 0 0 20px var(--cyan), 0 0 40px var(--cyan);
+  transform: scale(0.92);
+}
+
+.key:hover {
+  background: var(--cyan-dim);
+}
+
+.key.wide { min-width: 85px; }
+.key.space { min-width: 320px; }
+
+.filesystem-panel {
+  grid-column: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.file-item {
+  text-align: center;
+  padding: 8px;
+  border: 1px solid transparent;
+}
+
+.file-item svg { width: 28px; height: 28px; margin: 0 auto 4px; display: block; }
+
+.scanline {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 3px;
+  background: rgba(94, 234, 212, 0.05);
+  z-index: 100;
+  pointer-events: none;
+  animation: scan 6s linear infinite;
+}
+@keyframes scan { 0% { top: 0; } 100% { top: 100vh; } }
+
+.cursor {
+  display: inline-block;
+  width: 8px;
+  height: 15px;
+  background: var(--cyan);
+  animation: blink 1s infinite;
+  margin-left: 5px;
+  vertical-align: middle;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+.layer-box {
+  border: 1px solid var(--border-color);
+  padding: 5px;
+  margin-bottom: 5px;
+  background: rgba(94, 234, 212, 0.03);
+}

@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXURA - EDEX UI EDITION</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --cyan: #5eead4;
+            --cyan-dim: rgba(94, 234, 212, 0.2);
+            --bg: #020617;
+            --border: 1px solid rgba(94, 234, 212, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'JetBrains Mono', monospace;
+            cursor: crosshair;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--cyan);
+            height: 100vh;
+            overflow: hidden;
+            display: grid;
+            grid-template-rows: 60px 1fr 200px;
+            grid-template-columns: 300px 1fr 300px;
+            gap: 10px;
+            padding: 10px;
+            text-transform: uppercase;
+        }
+
+        .panel {
+            border: var(--border);
+            background: rgba(0, 0, 0, 0.4);
+            position: relative;
+            padding: 10px;
+            font-size: 11px;
+        }
+
+        .panel-header {
+            font-weight: bold;
+            border-bottom: var(--border);
+            margin-bottom: 8px;
+            padding-bottom: 4px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Top Bar */
+        header {
+            grid-column: 1 / span 3;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .system-info {
+            display: flex;
+            gap: 20px;
+        }
+
+        .clock {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--cyan);
+        }
+
+        /* Sidebar Hardware */
+        .hardware-monitor {
+            grid-row: 2;
+            grid-column: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .graph-box {
+            height: 60px;
+            width: 100%;
+            border-bottom: 1px solid var(--cyan-dim);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: flex-end;
+            gap: 2px;
+        }
+
+        .graph-bar {
+            flex: 1;
+            background: var(--cyan);
+            opacity: 0.6;
+        }
+
+        /* Main Terminal */
+        main {
+            grid-row: 2;
+            grid-column: 2;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .terminal-tabs {
+            display: flex;
+            gap: 2px;
+        }
+
+        .tab {
+            padding: 5px 20px;
+            border: var(--border);
+            border-bottom: none;
+            background: var(--cyan-dim);
+            font-size: 10px;
+        }
+
+        .tab.active {
+            background: var(--cyan);
+            color: var(--bg);
+        }
+
+        .terminal-content {
+            flex: 1;
+            border: var(--border);
+            background: rgba(0,0,0,0.8);
+            padding: 15px;
+            overflow-y: auto;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        /* Right Sidebar */
+        .network-panel {
+            grid-row: 2;
+            grid-column: 3;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .world-map {
+            flex: 1;
+            background: url('https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_monochrome.svg') no-repeat center;
+            background-size: contain;
+            opacity: 0.3;
+            filter: invert(100%) sepia(100%) saturate(500%) hue-rotate(130deg);
+        }
+
+        /* Footer Files */
+        .filesystem {
+            grid-row: 3;
+            grid-column: 1 / span 1;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
+            overflow-y: auto;
+        }
+
+        .file-icon {
+            text-align: center;
+            padding: 5px;
+            border: 1px solid transparent;
+        }
+
+        .file-icon:hover {
+            border: 1px solid var(--cyan);
+            background: var(--cyan-dim);
+        }
+
+        .file-icon svg {
+            width: 30px;
+            height: 30px;
+            margin: 0 auto;
+        }
+
+        /* Virtual Keyboard */
+        .keyboard {
+            grid-row: 3;
+            grid-column: 2 / span 2;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            padding: 10px;
+        }
+
+        .keyboard-row {
+            display: flex;
+            gap: 4px;
+            justify-content: center;
+        }
+
+        .key {
+            border: var(--border);
+            padding: 8px;
+            min-width: 40px;
+            text-align: center;
+            font-size: 12px;
+            background: rgba(0,0,0,0.5);
+        }
+
+        .key:hover {
+            background: var(--cyan);
+            color: var(--bg);
+        }
+
+        .key.wide { min-width: 80px; }
+        .key.space { min-width: 300px; }
+
+        /* Scans line */
+        .scanline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: rgba(94, 234, 212, 0.1);
+            z-index: 100;
+            pointer-events: none;
+            animation: scan 4s linear infinite;
+        }
+
+        @keyframes scan {
+            from { transform: translateY(0); }
+            to { transform: translateY(100vh); }
+        }
+
+        .prompt { color: #fff; }
+        .cursor { display: inline-block; width: 8px; height: 15px; background: var(--cyan); animation: blink 1s infinite; vertical-align: middle; }
+        @keyframes blink { 50% { opacity: 0; } }
+    </style>
+</head>
+<body>
+    <div class="scanline"></div>
+
+    <!-- Header Area -->
+    <header class="panel">
+        <div class="system-info">
+            <div>
+                <div class="text-xs opacity-50">MANUFACTURER</div>
+                <div class="font-bold">VICTUS HP</div>
+            </div>
+            <div>
+                <div class="text-xs opacity-50">SYSTEM TYPE</div>
+                <div class="font-bold">NEXURA CORE v2.4</div>
+            </div>
+        </div>
+
+        <div class="clock" id="clock">00:00:00</div>
+
+        <div class="system-info text-right">
+            <div>
+                <div class="text-xs opacity-50">UPTIME</div>
+                <div class="font-bold" id="uptime">0d 00:00:00</div>
+            </div>
+            <div>
+                <div class="text-xs opacity-50">POWER</div>
+                <div class="font-bold text-green-400">ON</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Left Sidebar: Hardware -->
+    <aside class="hardware-monitor">
+        <div class="panel flex-1">
+            <div class="panel-header">CPU USAGE <span>12 CORES</span></div>
+            <div id="cpu-graph" class="graph-box"></div>
+            <div class="text-xs space-y-1">
+                <div class="flex justify-between"><span>CORE 1-4</span> <span class="text-white">42%</span></div>
+                <div class="flex justify-between"><span>CORE 5-8</span> <span class="text-white">38%</span></div>
+                <div class="flex justify-between"><span>CORE 9-12</span> <span class="text-white">51%</span></div>
+            </div>
+        </div>
+        <div class="panel flex-1">
+            <div class="panel-header">MEMORY <span>32GB TOTAL</span></div>
+            <div id="ram-graph" class="graph-box"></div>
+            <div class="text-xs">
+                <div class="flex justify-between"><span>USED</span> <span class="text-white">14.2 GB</span></div>
+                <div class="flex justify-between"><span>SWAP</span> <span class="text-white">0.0 GB</span></div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Center: Main Terminal -->
+    <main>
+        <div class="terminal-tabs">
+            <div class="tab active">MAIN - PS</div>
+            <div class="tab">#2 - LOGS</div>
+            <div class="tab">#3 - MONITOR</div>
+            <div class="tab">EMPTY</div>
+        </div>
+        <div class="terminal-content" id="output">
+            <div>PS C:\USERS\NEXURA\CORE> <span class="prompt">INITIALIZING SYSTEM MODULES...</span></div>
+            <div class="text-green-400">[ OK ] FIREWALL MODULE ACTIVE</div>
+            <div class="text-green-400">[ OK ] AI ENGINE CONNECTED</div>
+            <div class="text-cyan-400 mt-2">WELCOME TO NEXURA OS v2.4</div>
+            <div class="mt-4">PS C:\USERS\NEXURA\CORE> <span id="command-input"></span><span class="cursor"></span></div>
+        </div>
+    </main>
+
+    <!-- Right Sidebar: Network -->
+    <aside class="network-panel">
+        <div class="panel flex-1">
+            <div class="panel-header">NETWORK STATUS <span>ONLINE</span></div>
+            <div class="text-xs opacity-70">IP: 192.168.1.105</div>
+            <div class="text-xs opacity-70">PING: 14ms</div>
+            <div class="world-map"></div>
+        </div>
+        <div class="panel flex-1">
+            <div class="panel-header">TRAFFIC MONITOR</div>
+            <div id="traffic-graph" class="graph-box"></div>
+            <div class="text-[10px]">
+                <div class="text-blue-400">UP: 124.5 KB/S</div>
+                <div class="text-green-400">DOWN: 2.1 MB/S</div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Bottom Left: Filesystem -->
+    <section class="panel filesystem">
+        <div class="file-icon">
+            <svg fill="currentColor" viewBox="0 0 20 20"><path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"></path></svg>
+            <div>ROOT</div>
+        </div>
+        <div class="file-icon">
+            <svg fill="currentColor" viewBox="0 0 20 20"><path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"></path></svg>
+            <div>CORE</div>
+        </div>
+        <div class="file-icon">
+            <svg fill="currentColor" viewBox="0 0 20 20"><path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"></path></svg>
+            <div>LOGS</div>
+        </div>
+        <div class="file-icon">
+            <svg fill="currentColor" viewBox="0 0 20 20"><path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"></path><path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"></path></svg>
+            <div>DRIVES</div>
+        </div>
+    </section>
+
+    <!-- Bottom Right: Keyboard -->
+    <section class="panel keyboard">
+        <div class="keyboard-row">
+            <div class="key">ESC</div><div class="key">1</div><div class="key">2</div><div class="key">3</div><div class="key">4</div><div class="key">5</div><div class="key">6</div><div class="key">7</div><div class="key">8</div><div class="key">9</div><div class="key">0</div><div class="key">BACK</div>
+        </div>
+        <div class="keyboard-row">
+            <div class="key wide">TAB</div><div class="key">Q</div><div class="key">W</div><div class="key">E</div><div class="key">R</div><div class="key">T</div><div class="key">Y</div><div class="key">U</div><div class="key">I</div><div class="key">O</div><div class="key">P</div><div class="key">[</div><div class="key">]</div>
+        </div>
+        <div class="keyboard-row">
+            <div class="key wide">CAPS</div><div class="key">A</div><div class="key">S</div><div class="key">D</div><div class="key">F</div><div class="key">G</div><div class="key">H</div><div class="key">J</div><div class="key">K</div><div class="key">L</div><div class="key">;</div><div class="key wide">ENTER</div>
+        </div>
+        <div class="keyboard-row">
+            <div class="key wide">SHIFT</div><div class="key">Z</div><div class="key">X</div><div class="key">C</div><div class="key">V</div><div class="key">B</div><div class="key">N</div><div class="key">M</div><div class="key">,</div><div class="key">.</div><div class="key">/</div><div class="key wide">SHIFT</div>
+        </div>
+        <div class="keyboard-row">
+            <div class="key">CTRL</div><div class="key">FN</div><div class="key">ALT</div><div class="key space">SPACE</div><div class="key">ALT</div><div class="key">CTRL</div>
+        </div>
+    </section>
+
+    <script>
+        // Update Clock
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('clock').textContent = now.toTimeString().split(' ')[0];
+        }
+        setInterval(updateClock, 1000);
+
+        // Update Uptime
+        let startTime = Date.now();
+        function updateUptime() {
+            let diff = Date.now() - startTime;
+            let secs = Math.floor(diff / 1000) % 60;
+            let mins = Math.floor(diff / 60000) % 60;
+            let hrs = Math.floor(diff / 3600000);
+            document.getElementById('uptime').textContent = `0d ${hrs.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
+        }
+        setInterval(updateUptime, 1000);
+
+        // Generate Random Graphs
+        function createGraph(id, count = 30) {
+            const container = document.getElementById(id);
+            for (let i = 0; i < count; i++) {
+                const bar = document.createElement('div');
+                bar.className = 'graph-bar';
+                bar.style.height = Math.random() * 100 + '%';
+                container.appendChild(bar);
+            }
+        }
+
+        function updateGraphs() {
+            document.querySelectorAll('.graph-bar').forEach(bar => {
+                bar.style.height = Math.random() * 100 + '%';
+                bar.style.opacity = 0.3 + Math.random() * 0.7;
+            });
+        }
+
+        createGraph('cpu-graph');
+        createGraph('ram-graph');
+        createGraph('traffic-graph');
+        setInterval(updateGraphs, 200);
+
+        // Simulated Typing
+        const commandText = "SCAN --NETWORK --TARGET 192.168.1.0/24";
+        let charIdx = 0;
+        const inputEl = document.getElementById('command-input');
+
+        function typeCommand() {
+            if (charIdx < commandText.length) {
+                inputEl.textContent += commandText[charIdx];
+                charIdx++;
+                setTimeout(typeCommand, 100);
+            }
+        }
+        setTimeout(typeCommand, 2000);
+    </script>
+</body>
+</html>
