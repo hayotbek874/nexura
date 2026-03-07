@@ -1,0 +1,14 @@
+fastapi
+uvicorn
+joblib
+pandas
+numpy
+scikit-learn
+requests
+feedparser
+beautifulsoup4
+googlesearch-python
+kaggle
+huggingface_hub
+python-nmap
+scapy
